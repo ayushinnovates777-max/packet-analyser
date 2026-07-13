@@ -1,0 +1,17 @@
+services:
+  # ── Backend: FastAPI Docker Service ──
+  - type: web
+    name: packetlens-api
+    env: docker
+    rootDir: backend
+    plan: free
+    healthCheckPath: /health
+
+  # ── Frontend: React Static Site ──
+  - type: web
+    name: packetlens-ui
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    pullRequestPreviewsEnabled: false
