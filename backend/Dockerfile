@@ -1,8 +1,8 @@
 FROM python:3.11-slim
 
-# Install system dependencies including tshark
+# Install system dependencies including tshark and libmagic
 RUN apt-get update && \
-    apt-get install -y tshark libpcap-dev && \
+    apt-get install -y tshark libpcap-dev libmagic1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
