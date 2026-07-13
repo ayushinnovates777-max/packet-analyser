@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 
 # Install system dependencies including tshark and libmagic
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y tshark libpcap-dev libmagic1 && \
     apt-get clean && \
