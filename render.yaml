@@ -6,6 +6,7 @@ services:
     rootDir: backend
     plan: free
     healthCheckPath: /health
+    region: oregon
 
   # ── Frontend: React Static Site ──
   - type: web
@@ -13,7 +14,7 @@ services:
     env: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishPath: dist
+    staticPublishPath: dist
     pullRequestPreviewsEnabled: false
     envVars:
       - key: VITE_API_URL
