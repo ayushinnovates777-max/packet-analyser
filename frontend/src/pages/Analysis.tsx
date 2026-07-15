@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, CheckCircle2, Shield, AlertTriangle, ArrowRight, Search, FileText, ChevronDown, ChevronRight, Download, Loader2, Clock, Sparkles, Terminal } from 'lucide-react';
+import { ShieldAlert, CheckCircle2, Shield, AlertTriangle, ArrowRight, Search, Download, Loader2, Sparkles, Terminal } from 'lucide-react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import jsPDF from 'jspdf';
@@ -146,7 +146,7 @@ const Analysis = () => {
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [state]);
 
-  const exportData = (format: 'json' | 'csv') => {
+  const exportData = (format: 'json' | 'csv' | 'pdf') => {
     if (format === 'json') {
       const exportObj = { capture, protocols, threats };
       const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });

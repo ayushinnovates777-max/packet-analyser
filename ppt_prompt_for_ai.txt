@@ -1,0 +1,9 @@
+Generate a professional, dark-themed presentation for "PacketLens AI", a modern web-based network packet analysis dashboard for Security Operations Centers (SOCs). 
+
+Slides to include:
+1. Purpose: Deep packet inspection and automated threat hunting via PCAP uploads.
+2. Frontend: React, TypeScript, TailwindCSS (glassmorphism UI), and Recharts for interactive graphs.
+3. Backend: Python, FastAPI, PyShark (packet decoding), and SQLite.
+4. Workflow: Upload PCAP -> Background decoding -> Anomaly flagging -> UI displays interactive AI summaries.
+5. Threat Detection: Detects Cleartext (FTP/Telnet), Port Scans, UDP Floods, and ICMP Ping Floods.
+6. Reporting: One-click PDF & JSON exports of AI summaries and incident reports for auditing.

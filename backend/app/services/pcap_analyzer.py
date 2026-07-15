@@ -26,6 +26,9 @@ class PCAPAnalyzer:
             total_bytes = 0
             protocols = {}
             syn_count = {}
+            icmp_count = {}
+            udp_count = {}
+            cleartext_usage = set()
             devices = {}
             
             for pkt in cap:
@@ -49,6 +52,11 @@ class PCAPAnalyzer:
                     dst_ip = pkt.ip.dst
                     devices[src_ip] = devices.get(src_ip, 0) + 1
                     devices[dst_ip] = devices.get(dst_ip, 0) + 1
+                elif hasattr(pkt, 'ipv6'):
+                    src_ip = pkt.ipv6.src
+                    dst_ip = pkt.ipv6.dst
+                    devices[src_ip] = devices.get(src_ip, 0) + 1
+                    devices[dst_ip] = devices.get(dst_ip, 0) + 1
                     
                 if hasattr(pkt, 'tcp'):
                     try:
@@ -64,8 +72,18 @@ class PCAPAnalyzer:
                     try:
                         src_port = int(pkt.udp.srcport)
                         dst_port = int(pkt.udp.dstport)
+                        if src_ip:
+                            udp_count[src_ip] = udp_count.get(src_ip, 0) + 1
                     except:
                         pass
+                        
+                if src_port in [21, 23] or dst_port in [21, 23]:
+                    if src_ip:
+                        cleartext_usage.add((src_ip, src_port if src_port in [21, 23] else dst_port))
+                
+                elif hasattr(pkt, 'icmp') or hasattr(pkt, 'icmpv6'):
+                    if src_ip:
+                        icmp_count[src_ip] = icmp_count.get(src_ip, 0) + 1
                         
                 timestamp = float(pkt.sniff_timestamp) if hasattr(pkt, 'sniff_timestamp') else 0.0
                 
@@ -79,7 +97,7 @@ class PCAPAnalyzer:
                     dst_port=dst_port,
                     protocol=highest_layer,
                     length=length,
-                    summary=str(pkt)
+                    summary=f"{src_ip or 'Any'} -> {dst_ip or 'Any'} [{highest_layer}] Len={length}"
                 )
                 self.db.add(db_pkt)
                 
@@ -108,7 +126,7 @@ class PCAPAnalyzer:
             # Threats
             threats = []
             for ip, count in syn_count.items():
-                if count > 50:
+                if count >= 20:
                     threats.append(models.Threat(
                         capture_id=self.capture_id,
                         severity="High",
@@ -117,6 +135,39 @@ class PCAPAnalyzer:
                         evidence=f"{ip} sent {count} SYN packets",
                         recommendation="Investigate source IP for unauthorized scanning activity."
                     ))
+                    
+            for ip, count in icmp_count.items():
+                if count >= 20:
+                    threats.append(models.Threat(
+                        capture_id=self.capture_id,
+                        severity="Medium",
+                        category="ICMP Flood",
+                        description="Possible ICMP Flood / Ping Flood",
+                        evidence=f"{ip} sent {count} ICMP packets",
+                        recommendation="Investigate source IP for DoS attack (Ping Flood)."
+                    ))
+                    
+            for ip, count in udp_count.items():
+                if count >= 100:
+                    threats.append(models.Threat(
+                        capture_id=self.capture_id,
+                        severity="High",
+                        category="UDP Flood",
+                        description="Possible UDP Flood Attack",
+                        evidence=f"{ip} sent {count} UDP packets",
+                        recommendation="Investigate source IP for volumetric DDoS."
+                    ))
+
+            for ip, port in cleartext_usage:
+                protocol_name = "FTP" if port == 21 else "Telnet"
+                threats.append(models.Threat(
+                    capture_id=self.capture_id,
+                    severity="Critical",
+                    category="Cleartext Protocol",
+                    description=f"Insecure {protocol_name} Usage",
+                    evidence=f"{ip} is communicating over unencrypted port {port}",
+                    recommendation=f"Block {protocol_name} traffic and migrate to secure alternatives (SFTP/SSH)."
+                ))
             
             for threat in threats:
                 self.db.add(threat)

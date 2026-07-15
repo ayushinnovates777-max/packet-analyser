@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Activity, Wifi, WifiOff } from 'lucide-react';
-import { getWsUrl, API_URL } from '../config';
+import { getWsUrl } from '../config';
 
 const PROTOCOL_COLORS: Record<string, string> = {
   TCP: '#3b82f6',

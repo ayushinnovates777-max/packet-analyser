@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Database files (local only)
+*.db
+*.sqlite3
+
+# Upload files (user data - never commit)
+backend/uploads/
+
+# Logs
+*.log
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# ngrok binary
+ngrok.exe
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

@@ -15,3 +15,6 @@ services:
     buildCommand: npm install && npm run build
     publishPath: dist
     pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_API_URL
+        value: https://packetlens-api.onrender.com

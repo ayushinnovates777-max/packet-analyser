@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Activity, UploadCloud, PieChart, Settings, Shield, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
